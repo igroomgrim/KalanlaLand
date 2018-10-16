@@ -1,0 +1,28 @@
+{
+  "name": "kalanlaland",
+  "version": "1.0.0",
+  "description": "Money is the root of evil",
+  "main": "truffle-config.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/igroomgrim/KalanlaLand.git"
+  },
+  "keywords": [
+    "money"
+  ],
+  "author": "iGROOMGRiM",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/igroomgrim/KalanlaLand/issues"
+  },
+  "homepage": "https://github.com/igroomgrim/KalanlaLand#readme",
+  "dependencies": {
+    "openzeppelin-solidity": "^1.12.0"
+  }
+}
