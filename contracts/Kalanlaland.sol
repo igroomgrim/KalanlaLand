@@ -4,7 +4,7 @@ import "openzeppelin-solidity/contracts/math/SafeMath.sol";
 import "openzeppelin-solidity/contracts/token/ERC721/ERC721Token.sol";
 
 contract KalanlaLand is ERC721Token {
-  address gameOwner;
+  address public gameOwner;
 
   struct Token {
     string name;
@@ -12,7 +12,7 @@ contract KalanlaLand is ERC721Token {
   }
 
   Token[] tokens;
-  mapping (uint256 => bool) tokensForSell;
+  mapping (uint256 => bool) public tokensForSell;
 
   constructor() ERC721Token("KalanlaLand", "KLT") public {
     gameOwner = msg.sender;
