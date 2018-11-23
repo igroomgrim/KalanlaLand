@@ -85,4 +85,22 @@ contract('KalanlaLand', async (accounts) => {
 			assert.equal(item0IsNotForSell, false);
 		})
 	})
+
+	describe("Transfer/Receive", () => {
+		it("should player1 give tokens[0] to player2", async () => {
+			await instance.giveTokenTo(player2, 0, {
+				from: player1
+			});
+
+			let tokenOwner = await instance.ownerOf(0);
+			assert.equal(player2, tokenOwner);
+
+			let balanceOfPlayer1 = await instance.balanceOf(player1);
+			assert.equal(0, balanceOfPlayer1);
+
+			let balanceOfPlayer2 = await instance.balanceOf(player2);
+			assert.equal(1, balanceOfPlayer2);
+		})
+	})
+
 })

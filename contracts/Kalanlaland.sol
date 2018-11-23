@@ -46,7 +46,10 @@ contract KalanlaLand is ERC721Token {
     require(msg.sender == ownerOf(_tokenID));
     require(_price > 0 ether);
 
-    tokensForSell[_tokenID] = true;
+    if (!_isTokenForSell(_tokenID)) {
+      tokensForSell[_tokenID] = true;
+    }
+    
     tokens[_tokenID].price = _price;
   }
 
@@ -67,8 +70,9 @@ contract KalanlaLand is ERC721Token {
     uint256 tokenPrice = tokens[_tokenID].price;
     uint256 excess = msg.value.sub(tokenPrice);
 
-    // Remvoe token from sell
+    // Remove token from sell
     tokensForSell[_tokenID] = false;
+    tokens[_tokenID].price = 0;
 
     // Money move
     seller.transfer(tokenPrice);
@@ -83,6 +87,15 @@ contract KalanlaLand is ERC721Token {
   function _transferToken(address _from, address _to, uint256 _tokenID) internal {
     removeTokenFrom(_from, _tokenID);
     addTokenTo(_to, _tokenID);
+  }
+
+  function giveTokenTo(address _to, uint256 _tokenID) public {
+    if (_isTokenForSell(_tokenID)) {
+      removeTokenForSell(_tokenID);
+    }
+
+    // Token move
+    _transferToken(msg.sender, _to, _tokenID);
   }
 
   // Utils
