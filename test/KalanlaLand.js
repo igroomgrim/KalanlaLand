@@ -68,5 +68,21 @@ contract('KalanlaLand', async (accounts) => {
 			let balanceOfPlayer1 = await instance.balanceOf(player1);
 			assert.equal(1, balanceOfPlayer1);
 		})
+
+		it("should player1 set and remove tokens[0] for sell", async () => {
+			await instance.offerTokenForSell(0, 2 * ether, {
+				from: player1
+			});
+
+			let item0IsForSell = await instance.tokensForSell(0);
+			assert.equal(item0IsForSell, true);
+
+			await instance.removeTokenForSell(0, {
+				from: player1
+			});
+
+			let item0IsNotForSell = await instance.tokensForSell(0);
+			assert.equal(item0IsNotForSell, false);
+		})
 	})
 })
