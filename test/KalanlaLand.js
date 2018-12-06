@@ -103,4 +103,86 @@ contract('KalanlaLand', async (accounts) => {
 		})
 	})
 
+	describe("Borrow/Lend", () => {
+		it("should player1 create request to borrow tokens[0]", async () => {
+			await instance.createBorrowRequest(0, {
+				from: player1
+			});
+
+			let requestCreated = await instance.borrowRequestCreated(0, player1);
+			assert.equal(true, requestCreated);
+		})
+
+		it("should player1 cancel request to borrow tokens[0]", async () => {
+			await instance.cancelBorrowRequest(0, {
+				from: player1
+			});
+
+			let requestCreated = await instance.borrowRequestCreated(0, player1);
+			assert.equal(false, requestCreated);
+		})
+
+		it("should player1 create request and player2 accept borrow request", async () => {
+			await instance.createBorrowRequest(0, {
+				from: player1
+			});
+
+			let requestCreated = await instance.borrowRequestCreated(0, player1);
+			assert.equal(true, requestCreated);
+
+			await instance.acceptBorrowRequest(player1, 0, {
+				from: player2
+			});
+
+			let borrower = await instance.tokenBorrower(0);
+			assert.equal(player1, borrower);
+		})
+
+		it("should player1 return tokens[0] back to player2", async () => {
+			await instance.createBorrowRequest(0, {
+				from: player1
+			});
+
+			let requestCreated = await instance.borrowRequestCreated(0, player1);
+			assert.equal(true, requestCreated);
+
+			await instance.acceptBorrowRequest(player1, 0, {
+				from: player2
+			});
+
+			let borrower = await instance.tokenBorrower(0);
+			assert.equal(player1, borrower);
+
+			await instance.returnTokenBack(0, {
+				from: player1
+			});
+
+			let emptyBorrower = await instance.tokenBorrower(0);
+			assert.equal(0, emptyBorrower);
+		})
+
+		it("should player2 take tokens[0] back from player1", async () => {
+			await instance.createBorrowRequest(0, {
+				from: player1
+			});
+
+			let requestCreated = await instance.borrowRequestCreated(0, player1);
+			assert.equal(true, requestCreated);
+
+			await instance.acceptBorrowRequest(player1, 0, {
+				from: player2
+			});
+
+			let borrower = await instance.tokenBorrower(0);
+			assert.equal(player1, borrower);
+
+			await instance.takeBackTokenFromBorrower(0, {
+				from: player2
+			});
+
+			let emptyBorrower = await instance.tokenBorrower(0);
+			assert.equal(0, emptyBorrower);
+		})
+	})
+
 })

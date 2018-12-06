@@ -14,6 +14,9 @@ contract KalanlaLand is ERC721Token {
   Token[] public tokens;
   mapping (uint256 => bool) public tokensForSell;
 
+  mapping (uint256 => mapping(address => bool)) public borrowRequestCreated;
+  mapping (uint256 => address) public tokenBorrower;
+
   constructor() ERC721Token("KalanlaLand", "KLT") public {
     gameOwner = msg.sender;
   }
@@ -98,6 +101,44 @@ contract KalanlaLand is ERC721Token {
     _transferToken(msg.sender, _to, _tokenID);
   }
 
+  // Borrow & Lend
+  function createBorrowRequest(uint256 _tokenID) public {
+    require(!_isContract(msg.sender));
+    require(!borrowRequestCreated[_tokenID][msg.sender]);
+
+    borrowRequestCreated[_tokenID][msg.sender] = true;
+  }
+
+  function cancelBorrowRequest(uint256 _tokenID) public {
+    require(!_isContract(msg.sender));
+    require(borrowRequestCreated[_tokenID][msg.sender]);
+    
+    borrowRequestCreated[_tokenID][msg.sender] = false;
+  }
+
+  function acceptBorrowRequest(address _borrower, uint256 _tokenID) public {
+    require(!_isContract(msg.sender));
+    require(msg.sender == ownerOf(_tokenID));
+    require(borrowRequestCreated[_tokenID][_borrower]);
+
+    tokenBorrower[_tokenID] = _borrower;
+    borrowRequestCreated[_tokenID][_borrower] = false;
+  }
+
+  function returnTokenBack(uint256 _tokenID) public {
+    require(!_isContract(msg.sender));
+    require(tokenBorrower[_tokenID] == msg.sender);
+
+    tokenBorrower[_tokenID] = address(0);
+  }
+
+  function takeBackTokenFromBorrower(uint256 _tokenID) public {
+    require(!_isContract(msg.sender));
+    require(msg.sender == ownerOf(_tokenID));
+
+    tokenBorrower[_tokenID] = address(0);
+  }
+
   // Utils
   function _isContract(address _addr) internal view returns (bool) {
       uint256 size;
@@ -108,26 +149,4 @@ contract KalanlaLand is ERC721Token {
   function _isTokenForSell(uint256 _tokenID) internal view returns (bool) {
     return tokensForSell[_tokenID];
   }
-
-  /*
-  function requestItemForLoan(uint256 _tokenID) public payable {
-
-  }
-
-  function removeLoanRequest(uint256 _tokenID) public {
-
-  }
-
-  function acceptLoanRequest(uint256 _tokenID, address _borrower) public {
-
-  }
-
-  function returnTokenFromLoan(uint256 _tokenID) public {
-
-  }
-
-  function takeBackTokenFromLoan(uint256 _tokenID) public {
-
-  }
-  */
 }
